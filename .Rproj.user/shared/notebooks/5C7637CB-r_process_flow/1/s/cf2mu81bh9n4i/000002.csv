@@ -1,0 +1,23 @@
+"0","#Packages"
+"0","library(sf)"
+"2","Linking to GEOS 3.5.1, GDAL 2.2.2, PROJ 4.9.2
+"
+"0","library(sp)"
+"0","library(tmap)"
+"2","Registered S3 methods overwritten by 'htmltools':
+  method               from         
+  print.html           tools:rstudio
+  print.shiny.tag      tools:rstudio
+  print.shiny.tag.list tools:rstudio
+"
+"2","Registered S3 method overwritten by 'htmlwidgets':
+  method           from         
+  print.htmlwidget tools:rstudio
+"
+"2","replacing previous import ‘sf::st_make_valid’ by ‘lwgeom::st_make_valid’ when loading ‘tmap’"
+"0","#Working directory definition"
+"0","#getwd()"
+"0",""
+"0","#Load data"
+"0","cege_data <- ""./0_source_data/UJTWorkSpace.RData"""
+"0","load(cege_data)"

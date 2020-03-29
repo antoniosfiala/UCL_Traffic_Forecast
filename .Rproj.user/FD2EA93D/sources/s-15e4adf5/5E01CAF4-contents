@@ -1,0 +1,160 @@
+---
+title: "CEGE0042 Assignment - data prep"
+output: html_notebook
+---
+
+### Document description:
+This notebook contains code to process raw data provided for CEGE0042 final assignment.
+It covers:<br>
+
+1. Project set up
+
+2. Area selection (Islington)
+
+3. Data sub-selection for further analysis
+
+
+### 1. Project set up:
+
+```{r}
+#Packages
+library(sf)
+library(sp)
+library(tmap)
+
+#Working directory definition
+#getwd()
+
+#Load data
+cege_data <- "./0_source_data/UJTWorkSpace.RData"
+load(cege_data)
+```
+
+
+### 2. Area selection (Islington)
+
+#### Flag links with data
+```{r}
+#In UJT there are 256 link ids with data
+all_UJT_links <- colnames(UJT)
+length(all_UJT_links)
+
+#In our shape file, there are 1402 link ids
+length(LCAPShp$LCAP_ID)
+
+#Flag which links in shape file we have data for
+LCAPShp$HaveDataFlag <- 0
+
+counter <- 0
+for (master_link_value in LCAPShp$LCAP_ID) {
+  counter <- counter + 1
+  
+  if (master_link_value %in% all_UJT_links) {
+    LCAPShp$HaveDataFlag[counter] <- 1
+  }
+  else{
+    LCAPShp$HaveDataFlag[counter] <- 0
+  }
+  
+}
+
+#Check that sum is equal to all links we have data for
+sum(LCAPShp$HaveDataFlag)
+```
+
+#### Sub-select links (visualise data availablity)
+```{r}
+# Link shp file to to sf object
+LCAPShp_sf <- st_as_sf(LCAPShp)
+
+# Visualise field to show links with speed data
+#plot(LCAPShp_sf["HaveDataFlag"])
+
+# Load reference shape file for London Borough
+# read in polygon shp and set crs to match 
+LondonBor <- st_read('./1_shape_files/shapefiles/London_Borough_Excluding_MHW.shp') %>%
+  st_transform(LondonBor, crs = st_crs(LCAPShp_sf))
+
+# for interactive viewing 
+tmap_mode("view")
+
+# layer the boroughs, all links, and selected links 
+tm_shape(LondonBor)+
+  tm_polygons(col='white')+
+  tm_shape(LCAPShp_sf)+
+  tm_lines(col='lightgreen')+
+  tm_shape(LCAPShp_sf["LCAP_ID"])+
+  tm_lines(col = "LCAP_ID")
+
+#LCAP_ID
+#HaveDataFlag
+
+```
+
+#### Select area(s)
+```{r}
+# get all links that are totally within a given borough
+LCAPShp_sf_sub <- LCAPShp_sf[st_within(LCAPShp_sf, 
+                              LondonBor[LondonBor$NAME == "Islington",], 
+                              sparse = FALSE),]
+
+# check number of links in the subset
+link_list <- LCAPShp_sf_sub$LCAP_ID
+
+length(link_list)
+# export list of links
+print(link_list)
+write.csv(x = link_list,"./2_data_split/selected_links.csv")
+```
+
+#### visualise links
+```{r}
+# plot to take a look
+plot(LCAPShp_sf_sub)
+
+# for interactive viewing 
+tmap_mode("view")
+
+# layer the boroughs, all links, and selected links 
+tm_shape(LondonBor)+
+  tm_polygons(col='white')+
+  tm_shape(LCAPShp_sf)+
+  tm_lines(col='lightgreen')+
+  tm_shape(LCAPShp_sf_sub)+
+  tm_lines(col='red')
+```
+
+
+### 3. Data sub-selection for further analysis
+
+#### 3.1 UJT table
+UJT table - each link (column) across time (row)
+```{r}
+# Export all source data into python friendly .csv files
+
+# Take selected links and export selections of source data
+
+# select relevant columns
+
+counter = 0
+link_list_string <- c()
+
+for (entry in link_list) {
+  #print(entry)
+  counter <- counter + 1
+  temp_string <- toString(entry)
+  link_list_string[[counter]] <- temp_string
+}
+link_list
+link_list_string
+
+sort(colnames(UJT))
+
+UJT[,c("2464")]
+
+
+```
+
+
+
+
