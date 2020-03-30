@@ -3,7 +3,8 @@
 library(sp)
 
 # === load data
-cege_data <- "/cloud/project/r_processing/0_source_data/UJTWorkSpace.RData"
+# cege_data <- "/cloud/project/r_processing/0_source_data/UJTWorkSpace.RData"
+cege_data <- "./0_source_data/UJTWorkSpace.RData"
 load(cege_data)
 
 # === explore data
