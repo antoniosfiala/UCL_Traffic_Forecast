@@ -3,7 +3,7 @@
 # Purpose: Select road links of interest, join with the road speed data for each link and the time info
 # Link selection approach: All links that are to some extent within a given borough are selected (can extend outside of the borough) - set here for City of London
 # Inputs: UJT, LCAPShp, dates, London Boroughs Shapefile
-# Outputs: traffic_speeds.csv, link_info.csv
+# Outputs: traffic_speeds.csv, link_info.csv, modified workspace (UJTWorkSpace_Processed.RData, to load in other scripts)
 
 # traffic_speeds.csv: 
 # - Columns are the selected links, indexed by LCAP_ID
@@ -16,7 +16,7 @@
 
 # SET UP ------------------------------------------------------------------
 
-# setwd("C:/Users/hanna/Desktop/Winter2020/spatio-temporal/assessment/analysis/UCL_Traffic_Forecast") 
+setwd("C:/Users/hanna/Desktop/Winter2020/spatio-temporal/assessment/analysis/UCL_Traffic_Forecast") 
 # working directory assummed to be inside a "project" folder
 load("./0_source_data/UJTWorkSpace.RData")
 library(sf)
@@ -40,26 +40,16 @@ Joined <- st_as_sf(inner_join(UJT_df, LCAPShp_sf, by = 'LCAP_ID')) # subset shp 
 LondonBor <- st_read('./1_shape_files/shapefiles/London_Borough_Excluding_MHW.shp') %>%
   st_transform(LondonBor, crs = st_crs(LCAPShp_sf))
 
-# get all links that are totally within a given borough
+# get all links that are within a given borough
 Subsetted <- Joined[st_intersects(Joined, 
                               LondonBor[LondonBor$NAME == "City of London",], 
                               sparse = FALSE),]
 
 length(Subsetted$OBJECTID) # check number of links in the subset
 
-# VISUALIZING -------------------------------------------------------------
-
-tmap_mode("view") # for interactive viewing 
-
-# layer the boroughs, all links with data, and selected links 
-tm_shape(LondonBor)+
-  tm_polygons(col='white')+
-  tm_shape(Joined)+
-  tm_lines(col='lightgreen')+
-tm_shape(Subsetted)+
-  tm_lines(col='red')
-
 # RESTRUCTURE AND EXPORT TO CSV -------------------------------------------
+
+save.image("./0_source_data/UJTWorkSpace_Processed.RData")
 
 # selet only the traffic speeds and transpose 
 traffic_speeds <- Subsetted[,1:5400] %>% st_drop_geometry()
@@ -76,3 +66,5 @@ link_info <- Subsetted[,5401:5442] %>% st_drop_geometry()
 # write data to csv
 write.csv(traffic_speeds, './2_data_split/traffic_speeds.csv', row.names=FALSE)
 write.csv(link_info, './2_data_split/link_info.csv', row.names=FALSE)
+
+# st_write(LCAPShp_sf, './1_shape_files/LCAPShp.shp')
