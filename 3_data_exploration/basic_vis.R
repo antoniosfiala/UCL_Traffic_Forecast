@@ -5,7 +5,6 @@
 # Outputs: heatmap jpeg
 
 # CREATE HEATMAP ----------------------------------------------------------
-
 data <- read.csv('./2_data_split/traffic_speeds.csv') # read the csv
 nt <- data[,1:22] # drop the time columns 
 nt <- as.matrix(t(nt)) # convert to matrix
@@ -27,5 +26,3 @@ byDay <- function(day){
 #for(i in 1:30){
 #  byDay(i)
 #}
-
-

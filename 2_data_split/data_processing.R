@@ -63,6 +63,9 @@ traffic_speeds$Date <- dates$Date
 # get attributes for each of the links 
 link_info <- Subsetted[,5401:5442] %>% st_drop_geometry()
 
+#View link info
+#link_info
+
 # write data to csv
 write.csv(traffic_speeds, './2_data_split/traffic_speeds.csv', row.names=FALSE)
 write.csv(link_info, './2_data_split/link_info.csv', row.names=FALSE)
