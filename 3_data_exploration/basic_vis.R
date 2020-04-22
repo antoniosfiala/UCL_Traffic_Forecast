@@ -5,6 +5,7 @@
 # Outputs: heatmap jpeg
 
 # CREATE HEATMAP ----------------------------------------------------------
+setwd("C:/Users/hanna/Desktop/Winter2020/spatio-temporal/assessment/analysis/UCL_Traffic_Forecast")
 data <- read.csv('./2_data_split/traffic_speeds.csv') # read the csv
 nt <- data[,1:22] # drop the time columns 
 nt <- as.matrix(t(nt)) # convert to matrix
@@ -26,3 +27,13 @@ byDay <- function(day){
 #for(i in 1:30){
 #  byDay(i)
 #}
+
+
+# TIME SERIES EXPLORATION -------------------------------------------------
+
+# weekly patterns in the data? 
+
+df <- as.data.frame(t(nt))
+
+# daily patterns? 
+
